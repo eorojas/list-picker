@@ -66,20 +66,58 @@ function addOptimizeButton(selectElement) {
     btn.onclick = (e) => {
         e.preventDefault();
         
-        // Initialize the Indexer (from indexer.js)
-        new UniversalIndexer(selectElement);
+        // Avoid double-injection
+        if (selectElement.previousSibling && selectElement.previousSibling.className === 'list-picker-search') return;
 
-        // Visual Feedback
-        btn.innerText = "✅";
-        btn.style.borderColor = "green";
-        btn.style.color = "green";
-        btn.title = "Optimized!";
+        // Initialize Indexer
+        const IndexerClass = window.UniversalIndexer || UniversalIndexer;
+        const indexer = new IndexerClass(selectElement);
+
+        // Create Search Box
+        const searchBox = document.createElement('input');
+        searchBox.type = "text";
+        searchBox.className = "list-picker-search";
+        searchBox.placeholder = "Type to search...";
         
-        // Optional: Fade out button
-        setTimeout(() => {
-            btn.style.opacity = "0.5";
-            btn.style.pointerEvents = "none";
-        }, 1500);
+        Object.assign(searchBox.style, {
+            marginRight: "8px",
+            padding: "4px",
+            border: "2px solid #007bff",
+            borderRadius: "4px",
+            width: "150px"
+        });
+
+        // Insert BEFORE the select
+        selectElement.parentNode.insertBefore(searchBox, selectElement);
+        searchBox.focus();
+
+        // Handle Search
+        searchBox.addEventListener('input', () => {
+            const foundText = indexer.search(searchBox.value);
+            if (foundText) {
+                searchBox.style.borderColor = "#28a745"; // Success green
+            } else {
+                searchBox.style.borderColor = "#dc3545"; // Error red
+            }
+        });
+
+        // Handle Keys
+        searchBox.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchBox.value = ""; // Clear for next use
+                searchBox.style.borderColor = "#007bff";
+                selectElement.focus();
+            }
+            if (e.key === 'Escape') {
+                searchBox.value = "";
+                searchBox.blur();
+            }
+        });
+
+        // Update Button State
+        btn.innerText = "🔍";
+        btn.title = "Search active";
     };
 
     // Insert button immediately after the select element

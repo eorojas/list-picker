@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "List Picker",
+  "version": "1.0",
+  "description": "Optimizes generic HTML select elements for rapid keyboard navigation.",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["indexer.js", "content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
