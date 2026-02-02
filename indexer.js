@@ -1,3 +1,13 @@
+/**
+ * UniversalIndexer
+ * Imports knowledge from 'pickCountry' project.
+ * * Logic:
+ * 1. Scans a <select> element.
+ * 2. Builds a reverse-index map of all words (tokens) to option indices.
+ * 3. Hijacks keystrokes to allow searching by any word in the option name.
+ * 4. Buffers input to allow for "slow typing" (1.5s timeout).
+ */
+
 class UniversalIndexer {
     constructor(selectElement) {
         this.select = selectElement;
