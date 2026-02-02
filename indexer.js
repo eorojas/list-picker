@@ -3,33 +3,6 @@
  * Replaces a native <select> with a searchable, filterable custom dropdown.
  */
 
-// Common Country Aliases (Embedded Knowledge)
-const COUNTRY_ALIASES = {
-    "united kingdom": ["uk", "great britain", "england", "britain"],
-    "united states": ["usa", "america", "us"],
-    "netherlands": ["holland"],
-    "korea, republic of": ["south korea"],
-    "korea, democratic people's republic of": ["north korea"],
-    "russian federation": ["russia"],
-    "viet nam": ["vietnam"],
-    "taiwan, province of china": ["taiwan"],
-    "syrian arab republic": ["syria"],
-    "moldova, republic of": ["moldova"],
-    "iran, islamic republic of": ["iran"],
-    "tanzania, united republic of": ["tanzania"],
-    "venezuela, bolivarian republic of": ["venezuela"],
-    "bolivia, plurinational state of": ["bolivia"],
-    "lao people's democratic republic": ["laos"],
-    "brunei darussalam": ["brunei"],
-    "cabo verde": ["cape verde"],
-    "czechia": ["czech republic"],
-    "eswatini": ["swaziland"],
-    "north macedonia": ["macedonia"],
-    "myanmar": ["burma"],
-    "holy see": ["vatican"],
-    "united arab emirates": ["uae"]
-};
-
 class ListPickerCombobox {
     constructor(selectElement) {
         this.select = selectElement;
@@ -49,34 +22,19 @@ class ListPickerCombobox {
         this.buildUI();
         this.select.style.display = 'none';
         this.select.parentNode.insertBefore(this.container, this.select.nextSibling);
-        console.log("ListPicker: Combobox initialized.");
     }
 
     extractOptions() {
-        this.options = Array.from(this.select.options).map((opt, idx) => {
-            const lowerText = opt.text.toLowerCase();
-            let searchTerms = [lowerText];
-            
-            // Add Aliases if we recognize the country name
-            for (const [official, aliases] of Object.entries(COUNTRY_ALIASES)) {
-                if (lowerText.includes(official) || official.includes(lowerText)) {
-                    searchTerms.push(...aliases);
-                }
-            }
-
-            return {
-                index: idx,
-                text: opt.text,
-                value: opt.value,
-                lowerText: lowerText,
-                searchTerms: searchTerms.join(" ") // Combine for easy searching
-            };
-        });
+        this.options = Array.from(this.select.options).map((opt, idx) => ({
+            index: idx,
+            text: opt.text,
+            value: opt.value,
+            lowerText: opt.text.toLowerCase()
+        }));
         this.filteredOptions = this.options;
     }
 
     buildUI() {
-        // Main Container
         this.container = document.createElement('div');
         this.container.className = 'list-picker-container';
         Object.assign(this.container.style, {
@@ -86,11 +44,9 @@ class ListPickerCombobox {
             fontFamily: 'sans-serif'
         });
 
-        // Input Field
         this.input = document.createElement('input');
         this.input.type = 'text';
         this.input.placeholder = 'Select...';
-        // Handle case where nothing is selected (index -1)
         if (this.select.selectedIndex >= 0) {
              this.input.value = this.select.options[this.select.selectedIndex].text;
         }
@@ -100,11 +56,9 @@ class ListPickerCombobox {
             padding: '8px',
             boxSizing: 'border-box',
             border: '1px solid #ccc',
-            borderRadius: '4px',
-            cursor: 'pointer'
+            borderRadius: '4px'
         });
 
-        // Dropdown List
         this.list = document.createElement('ul');
         Object.assign(this.list.style, {
             position: 'absolute',
@@ -124,15 +78,12 @@ class ListPickerCombobox {
             boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
         });
 
-        // Events
         this.input.addEventListener('click', () => this.toggle());
         this.input.addEventListener('input', () => this.filter(this.input.value));
         this.input.addEventListener('keydown', (e) => this.handleKey(e));
 
         document.addEventListener('click', (e) => {
-            if (!this.container.contains(e.target)) {
-                this.close();
-            }
+            if (!this.container.contains(e.target)) this.close();
         });
 
         this.container.appendChild(this.input);
@@ -147,7 +98,6 @@ class ListPickerCombobox {
     open() {
         this.isOpen = true;
         this.list.style.display = 'block';
-        this.input.placeholder = 'Type to filter...';
         this.input.select();
         this.renderList(this.options);
     }
@@ -219,11 +169,8 @@ class ListPickerCombobox {
 
     filter(query) {
         if (!this.isOpen) this.open();
-        
         const q = query.toLowerCase();
-        // Check both visible text AND our enriched search terms (aliases)
-        this.filteredOptions = this.options.filter(opt => opt.searchTerms.includes(q));
-        
+        this.filteredOptions = this.options.filter(opt => opt.lowerText.includes(q));
         this.highlightedIndex = 0;
         this.renderList(this.filteredOptions);
     }
@@ -243,7 +190,6 @@ class ListPickerCombobox {
 
         items.forEach((item, idx) => {
             const li = document.createElement('li');
-            // Show alias match if applicable? For now just show standard text.
             li.textContent = item.text;
             Object.assign(li.style, {
                 padding: '8px',
@@ -258,9 +204,7 @@ class ListPickerCombobox {
                 this.updateHighlightUI();
             };
 
-            li.onclick = () => {
-                this.selectOption(item);
-            };
+            li.onclick = () => this.selectOption(item);
 
             this.list.appendChild(li);
         });

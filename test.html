@@ -290,7 +290,14 @@
         countriesData.forEach(country => {
             const option = document.createElement('option');
             option.value = country.code;
-            option.textContent = country.name;
+            
+            // Include aliases in the text so they are searchable/visible
+            let displayName = country.name;
+            if (country.aliases && country.aliases.length > 0) {
+                displayName += ` (${country.aliases.join(", ")})`;
+            }
+            
+            option.textContent = displayName;
             select.appendChild(option);
         });
 
