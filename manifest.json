@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "List Picker",
   "version": "1.0",
-  "description": "Optimizes generic HTML select elements for rapid keyboard navigation.",
+  "description": "Replaces generic HTML select elements with searchable comboboxes.",
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
