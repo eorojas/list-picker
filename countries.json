@@ -1,37 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List Picker Test Page</title>
-    <style>
-        body { font-family: sans-serif; padding: 2rem; }
-        .container { max-width: 600px; margin: 0 auto; }
-        select { padding: 8px; font-size: 16px; min-width: 300px; }
-        .info { margin-bottom: 20px; color: #666; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>List Picker Test (Combobox)</h1>
-        <p class="info">This dropdown has <span id="count">0</span> items.</p>
-        
-        <label for="countries">Select a Country: </label>
-        <select id="countries">
-            <option value="">-- Choose --</option>
-        </select>
-        
-        <p style="margin-top: 50px"><strong>Instructions:</strong></p>
-        <ol>
-            <li>The extension should automatically replace the standard dropdown with a custom Combobox.</li>
-            <li>Click the box to open the list.</li>
-            <li>Type to filter (e.g., "king" or "stan").</li>
-            <li>Use Arrow keys to navigate and Enter to select.</li>
-        </ol>
-    </div>
-
-    <script>
-        const countriesData = [
+[
   { "name": "Afghanistan", "code": "AF", "aliases": ["Afganistan"] },
   { "name": "Åland Islands", "code": "AX", "aliases": ["Aland", "Oland"] },
   { "name": "Albania", "code": "AL", "aliases": [] },
@@ -284,17 +251,4 @@
   { "name": "Yemen", "code": "YE", "aliases": [] },
   { "name": "Zambia", "code": "ZM", "aliases": [] },
   { "name": "Zimbabwe", "code": "ZW", "aliases": [] }
-];
-
-        const select = document.getElementById('countries');
-        countriesData.forEach(country => {
-            const option = document.createElement('option');
-            option.value = country.code;
-            option.textContent = country.name;
-            select.appendChild(option);
-        });
-
-        document.getElementById('count').textContent = countriesData.length;
-    </script>
-</body>
-</html>
+]
